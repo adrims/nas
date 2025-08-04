@@ -97,3 +97,9 @@
 
 ### QBittorrent
  - Check the pod logs to connect the first time, depends on the version will be "admin/adminadmin" or "admin/{temporal password generated printed on logs}"
+
+### Cloudflare
+- First you need a domain and should be manage by cloudflare
+- Go to https://one.dash.cloudflare.com/
+- Open Network -> Tunnels
+- Create a new tunnel, it will give a command to run the docker container, you can take the token and set up the docker compose to run the command with the token provided.

@@ -158,3 +158,12 @@ services:
       - /mnt/Config/notifiarr:/config
     environment:
       - TRASH_GUIDE_SYNC=1
+
+  #Cloudflare jellyfin tunnel
+  cloudflared-jellyfin:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared-jellyfin
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    env_file:
+      - .env
