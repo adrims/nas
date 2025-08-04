@@ -1,0 +1,160 @@
+services:
+  #shows
+  sonarr:
+    image: linuxserver/sonarr
+    container_name: sonarr
+    restart: unless-stopped
+    ports:
+      - 8989:8989
+    environment:
+      - PUID=1000
+      - PGID=10
+      - TZ=Europe/Madrid
+    volumes:
+      - /volume1/Shows:/shows
+      - /volume1/Movies:/movies
+      - /volume1/Downloads:/downloads
+      - /mnt/Config/sonarr:/config
+
+  #anime
+  sonarr-anime:
+    image: linuxserver/sonarr
+    container_name: sonarr-anime
+    restart: unless-stopped
+    ports:
+      - 6969:6969
+    environment:
+      - PUID=1000
+      - PGID=10
+      - TZ=Europe/Madrid
+    volumes:
+      - /volume1/Anime:/anime
+      - /volume1/Downloads:/downloads
+      - /mnt/Config/sonarr-anime:/config
+
+
+  #downloads manager
+  qbittorrent:
+    image: linuxserver/qbittorrent
+    container_name: qbittorrent
+    restart: unless-stopped
+    ports:
+      - 8080:8080       # Web UI
+      - 6881:6881       # BitTorrent port
+      - 6881:6881/udp   # BitTorrent port (UDP)
+    environment:
+      - PUID=1000
+      - PGID=10
+      - TZ=Europe/Madrid
+      - WEBUI_PORT=8080
+    volumes:
+      - /volume1/Downloads:/downloads
+      - /mnt/Config/qbittorrent:/config
+
+  #indexer manager
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    restart: unless-stopped
+    ports:
+      - 9696:9696
+    environment:
+      - PUID=1000
+      - PGID=10
+      - TZ=Europe/Madrid
+    volumes:
+      - /mnt/Config/prowlarr:/config
+
+  #streaming/viewer 
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    restart: unless-stopped
+    ports:
+      - 8096:8096
+    environment:
+      - PUID=1000
+      - PGID=10
+      - TZ=Europe/Madrid
+    volumes:
+      - /volume1/Shows:/media/Shows
+      - /volume1/Movies:/media/Movies
+      - /volume1/Anime:/media/Anime
+      - /mnt/Config/jellyfin:/config
+      - /volume1/Downloads:/downloads  # Optional, in case you want access to in-progress torrents
+
+  #DNS provider
+  noip:
+    image: noipcom/noip-duc
+    container_name: noip
+    restart: unless-stopped
+    volumes:
+      - /mnt/Config/noip:/config
+    env_file:
+      - .env
+    environment:
+      - TZ=Europe/Madrid
+    command:
+      [
+        "--username", "${NOIP_USERNAME}",
+        "--password", "${NOIP_PASSWORD}",
+        "--hostnames", "${NOIP_HOSTNAMES}"
+      ]
+
+  #movies
+  radarr:
+    image: linuxserver/radarr
+    container_name: radarr
+    restart: unless-stopped
+    ports:
+      - 7878:7878
+    environment:
+      - PUID=1000
+      - PGID=10
+      - TZ=Europe/Madrid
+    volumes:
+      - /volume1/Movies:/movies
+      - /volume1/Downloads:/downloads
+      - /mnt/Config/radarr:/config
+
+  #subtitles
+  bazarr:
+    image: linuxserver/bazarr
+    container_name: bazarr
+    restart: unless-stopped
+    ports:
+      - 6767:6767
+    environment:
+      - PUID=1000
+      - PGID=10
+      - TZ=Europe/Madrid
+    volumes:
+      - /volume1/Movies:/movies
+      - /volume1/Shows:/shows
+      - /volume1/Anime:/anime
+      - /mnt/Config/bazarr:/config
+
+  #cloudflare blocks
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    restart: unless-stopped
+    ports:
+      - "8191:8191"
+    environment:
+      - LOG_LEVEL=info
+
+  #Quality & Format profiles
+  notifiarr:
+    image: golift/notifiarr
+    container_name: notifiarr
+    restart: unless-stopped
+    network_mode: bridge
+    ports:
+      - "5454:5454"
+    env_file:
+      - .env
+    volumes:
+      - /mnt/Config/notifiarr:/config
+    environment:
+      - TRASH_GUIDE_SYNC=1
