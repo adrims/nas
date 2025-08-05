@@ -131,8 +131,22 @@ services:
     volumes:
       - /volume1/Movies:/movies
       - /volume1/Shows:/shows
-      - /volume1/Anime:/anime
       - /mnt/Config/bazarr:/config
+  
+   #subtitles for anime, not compatible with multiple sonarr/radarr instances
+  bazarr-anime:
+    image: linuxserver/bazarr
+    container_name: bazarr-anime
+    restart: unless-stopped
+    ports:
+      - 6666:6767
+    environment:
+      - PUID=1000
+      - PGID=10
+      - TZ=Europe/Madrid
+    volumes:
+      - /volume1/Anime:/anime
+      - /mnt/Config/bazarr-anime:/config
 
   #cloudflare blocks
   flaresolverr:
