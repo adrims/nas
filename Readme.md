@@ -19,12 +19,13 @@
 ### Services that requires external signup/login
 `notifiarr`
   
+  - **WARNING!!!** After my expierence I don't recommend this service, is not worth it for 5$ having free ones as Recyclarr or Configurarr
   - Requires account creation -> https://notifiarr.com/
   - Guide to sync trash-guides (requires unique payment of 5$ min) -> https://trash-guides.info/Guide-Sync/
   To see data in the website, first you need to create your notifiarr services and link with your apps.
     - Go to the config file and change whatever you need, is quite self explanatory the config file.
   After your apps/clients has been syncronized with Notifiarr website, you can start sync all profiles you need
-    - !IMPORTANT, not sync all profiles, a lot of them are incompatible, sync only your requirements.
+    - **IMPORTANT!!**, not sync all profiles, a lot of them are incompatible, sync only your requirements.
 
   - Custom profile to have Original + Spanish:
     ```
@@ -145,6 +146,15 @@
         RSA: 256 bytes
         HuC status: 0x00090001
     - Activate them or deactivate them accorderly
+
+### MultiLanguage
+- If you want to have multilanguage audio on movies/shows, I reccomend to set up multiple sonarr/radarr instances per language, you need good indexers with the language you want, otherwise you will get only Original or English.
+- To have a good performance on those instances, remove all the indexers and only let the ones are providing the assets in the language you want.
+- Have only one profile per instance, forcing on each profile the language you want to use, this also will help to search the titles in the proper language and avoid miss torrents (If you have only one profile and try to manage the languages by priority, won't work as you are gonna miss many torrents if doesn't have the original title)
+- With the non original language I recommend to have a profile more flexible in terms of qualities, also in the minimum numbers of seeds in the indexer.
+- Private indexers are the key, some examples that private indexers that I saw they're working quite well:
+  - [Emuwarez](https://emuwarez.it/) - Spanish
+  - [Torrentleach](https://www.torrentleech.org/) - English
         
 
 
