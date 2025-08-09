@@ -112,3 +112,40 @@
 - Go to https://one.dash.cloudflare.com/
 - Open Network -> Tunnels
 - Create a new tunnel, it will give a command to run the docker container, you can take the token and set up the docker compose to run the command with the token provided.
+
+### JellyFin
+  - Activate Hardware acceleration
+    - Check the jellyfin documentation -> https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/
+    - Check if the drivers are already installed, in this case for intel VAAPI/QSV ```vainfo```, that should return all formats supported by your drivers (the command may will differ on each driver/arch), otherwise install the proper drivers for your machine.
+    - Check the groups with access to your GPU, in this case:
+        ``` 
+        ls -l /dev/dri
+        ls -l /dev/dri/renderD128
+    - You will see something like:
+        ```
+        crw-rw---- 1 root video  226,   0 Aug  9 06:51 card0
+        crw-rw---- 1 root render 226, 128 Aug  3 12:34 renderD128
+    - Add those groups to you're cointainer jellyfin - [Example](https://github.com/adrims/nas/blob/master/mediaserver/docker-compose.yml#L97)
+    - Restart the container and go to Dashboard -> PlayBack -> Transcoding
+    - Select your hardware acceleration from the table ![GPU Table](documentation\images\GPU-table.png)
+    - QSV device -> In this case ```/dev/dri/renderD128 ``` You need to pick the one you're using depending on your system (if you're using containers don't forget to mount it [Example](https://github.com/adrims/nas/blob/master/mediaserver/docker-compose.yml#L95))
+    - Activate the formats that your drivers support, usually there are a command that shows you all supported format, in this case ```vainfo```
+    - To enable H.264 or HVEC ensure you have HuC firmware configured, otherwise it may cause sync issue.
+    - To check if you have HuC firmware configure on Linux you can use:
+      ```
+        cat /sys/kernel/debug/dri/0/i915_huc_status (for older versions)
+        cat /sys/kernel/debug/dri/0/gt/uc/huc_info (for newer versions)
+
+        Should return something lke:
+
+        HuC firmware: i915/tgl_huc.bin
+        status: RUNNING
+        version: found 7.9.3
+        uCode: 589504 bytes
+        RSA: 256 bytes
+        HuC status: 0x00090001
+    - Activate them or deactivate them accorderly
+        
+
+
+
