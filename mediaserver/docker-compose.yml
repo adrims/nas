@@ -88,10 +88,6 @@ services:
       gluetun:
         condition: service_healthy
     restart: unless-stopped
-    ports:
-      - 8080:8080       # Web UI
-      - 6881:6881       # BitTorrent port
-      - 6881:6881/udp   # BitTorrent port (UDP)
     environment:
       - PUID=1000
       - PGID=10
