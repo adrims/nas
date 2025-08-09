@@ -48,11 +48,45 @@ services:
       - /volume1/Downloads:/downloads
       - /mnt/Config/sonarr-anime:/config
 
+  #VPN service
+  gluetun:
+    image: qmcgaw/gluetun:latest
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    environment:
+      - VPN_SERVICE_PROVIDER=nordvpn
+      - VPN_TYPE=openvpn                 
+      - OPENVPN_USER=${NORD_USER}        
+      - OPENVPN_PASSWORD=${NORD_PASS}
+      # choose a couple of stable, torrent-friendly locations
+      - SERVER_COUNTRIES=Netherlands,Switzerland
+      - TZ=Europe/Madrid
+      - DOT=on
+    volumes:
+      - /mnt/Config/gluetun:/gluetun
+    # expose qBittorrent ports here (because qB shares this network)
+    ports:
+      - "8080:8080"          # qB Web UI
+      - "6881:6881/tcp"      # BitTorrent TCP
+      - "6881:6881/udp"      # BitTorrent UDP/DHT
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "gluetun", "healthcheck"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
 
   #downloads manager
   qbittorrent:
     image: linuxserver/qbittorrent
     container_name: qbittorrent
+    network_mode: "service:gluetun"      # <— routes ONLY this container via VPN
+    depends_on:
+      gluetun:
+        condition: service_healthy
     restart: unless-stopped
     ports:
       - 8080:8080       # Web UI
