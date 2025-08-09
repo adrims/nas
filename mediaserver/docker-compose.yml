@@ -92,6 +92,8 @@ services:
       - PUID=1000
       - PGID=10
       - TZ=Europe/Madrid
+    devices:
+    - /dev/dri:/dev/dri
     group_add: # groups for transcoding with GPU
     - "44"   # video group
     - "105"  # render group
