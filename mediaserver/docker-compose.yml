@@ -16,6 +16,22 @@ services:
       - /volume1/Downloads:/downloads
       - /mnt/Config/sonarr:/config
 
+  #shows-spanish
+  sonarr-spanish:
+    image: linuxserver/sonarr
+    container_name: sonarr-spanish
+    restart: unless-stopped
+    ports:
+      - 5959:8989
+    environment:
+      - PUID=1000
+      - PGID=10
+      - TZ=Europe/Madrid
+    volumes:
+      - /volume1/Anime:/anime
+      - /volume1/Downloads:/downloads
+      - /mnt/Config/sonarr-spanish:/config
+
   #anime
   sonarr-anime:
     image: linuxserver/sonarr
@@ -76,6 +92,9 @@ services:
       - PUID=1000
       - PGID=10
       - TZ=Europe/Madrid
+    group_add: # groups for transcoding with GPU
+    - "44"   # video group
+    - "105"  # render group
     volumes:
       - /volume1/Shows:/media/Shows
       - /volume1/Movies:/media/Movies
@@ -116,6 +135,22 @@ services:
       - /volume1/Movies:/movies
       - /volume1/Downloads:/downloads
       - /mnt/Config/radarr:/config
+  
+  #movies-spanish
+  radarr-spanish:
+    image: linuxserver/radarr
+    container_name: radarr-spanish
+    restart: unless-stopped
+    ports:
+      - 6868:7878
+    environment:
+      - PUID=1000
+      - PGID=10
+      - TZ=Europe/Madrid
+    volumes:
+      - /volume1/Movies:/movies
+      - /volume1/Downloads:/downloads
+      - /mnt/Config/radarr-spanish:/config
 
   #subtitles
   bazarr:
@@ -181,3 +216,17 @@ services:
     command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
     env_file:
       - .env
+
+  #For search and manage request to download
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    restart: unless-stopped
+    ports:
+      - 5055:5055
+    environment:
+      - PUID=1000
+      - PGID=10
+      - TZ=Europe/Madrid
+    volumes:
+      - /mnt/Config/jellyseerr:/app/config
