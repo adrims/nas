@@ -11,9 +11,7 @@ services:
       - PGID=10
       - TZ=Europe/Madrid
     volumes:
-      - /volume1/Shows:/shows
-      - /volume1/Movies:/movies
-      - /volume1/Downloads:/downloads
+      - /volume1/media:/data
       - /mnt/Config/sonarr:/config
 
   #shows-spanish
@@ -28,8 +26,7 @@ services:
       - PGID=10
       - TZ=Europe/Madrid
     volumes:
-      - /volume1/Anime:/anime
-      - /volume1/Downloads:/downloads
+      - /volume1/media:/data
       - /mnt/Config/sonarr-spanish:/config
 
   #anime
@@ -44,8 +41,7 @@ services:
       - PGID=10
       - TZ=Europe/Madrid
     volumes:
-      - /volume1/Anime:/anime
-      - /volume1/Downloads:/downloads
+      - /volume1/media:/data
       - /mnt/Config/sonarr-anime:/config
 
   #VPN service
@@ -94,8 +90,8 @@ services:
       - TZ=Europe/Madrid
       - WEBUI_PORT=8080
     volumes:
-      - /volume1/Downloads:/downloads
-      - /mnt/Config/qbittorrent:/config
+      - /volume1/media:/data
+      - /volume1/media/Config/qbittorrent:/config
 
   #indexer manager
   prowlarr:
@@ -128,29 +124,11 @@ services:
     - "44"   # video group
     - "105"  # render group
     volumes:
-      - /volume1/Shows:/media/Shows
-      - /volume1/Movies:/media/Movies
-      - /volume1/Anime:/media/Anime
+      - /volume1/media/Shows:/media/Shows
+      - /volume1/media/Movies:/media/Movies
+      - /volume1/media/Anime:/media/Anime
       - /mnt/Config/jellyfin:/config
-      - /volume1/Downloads:/downloads  # Optional, in case you want access to in-progress torrents
-
-  #DNS provider
-  noip:
-    image: noipcom/noip-duc
-    container_name: noip
-    restart: unless-stopped
-    volumes:
-      - /mnt/Config/noip:/config
-    env_file:
-      - .env
-    environment:
-      - TZ=Europe/Madrid
-    command:
-      [
-        "--username", "${NOIP_USERNAME}",
-        "--password", "${NOIP_PASSWORD}",
-        "--hostnames", "${NOIP_HOSTNAMES}"
-      ]
+      - /volume1/media/Downloads:/downloads  # Optional, in case you want access to in-progress torrents
 
   #movies
   radarr:
@@ -164,8 +142,7 @@ services:
       - PGID=10
       - TZ=Europe/Madrid
     volumes:
-      - /volume1/Movies:/movies
-      - /volume1/Downloads:/downloads
+      - /volume1/media:/data
       - /mnt/Config/radarr:/config
   
   #movies-spanish
@@ -180,8 +157,7 @@ services:
       - PGID=10
       - TZ=Europe/Madrid
     volumes:
-      - /volume1/Movies:/movies
-      - /volume1/Downloads:/downloads
+      - /volume1/media:/data
       - /mnt/Config/radarr-spanish:/config
 
   #subtitles
@@ -196,8 +172,8 @@ services:
       - PGID=10
       - TZ=Europe/Madrid
     volumes:
-      - /volume1/Movies:/movies
-      - /volume1/Shows:/shows
+      - /volume1/media/Movies:/movies
+      - /volume1/media/Shows:/shows
       - /mnt/Config/bazarr:/config
   
    #subtitles for anime, not compatible with multiple sonarr/radarr instances
@@ -212,7 +188,7 @@ services:
       - PGID=10
       - TZ=Europe/Madrid
     volumes:
-      - /volume1/Anime:/anime
+      - /volume1/media/Anime:/anime
       - /mnt/Config/bazarr-anime:/config
 
   #cloudflare blocks
@@ -241,9 +217,9 @@ services:
       - TRASH_GUIDE_SYNC=1
 
   #Cloudflare jellyfin tunnel
-  cloudflared-jellyfin:
+  cloudflared:
     image: cloudflare/cloudflared:latest
-    container_name: cloudflared-jellyfin
+    container_name: cloudflared
     restart: unless-stopped
     command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
     env_file:

@@ -109,7 +109,7 @@
  - Check the pod logs to connect the first time, depends on the version will be "admin/adminadmin" or "admin/{temporal password generated printed on logs}"
  - Activate NordVPN on QBittorrent
     - Create an account in NordVPN
-    - Set up a container that can be integrated with NordVPN, for example [gluetun](https://github.com/adrims/nas/blob/master/mediaserver/docker-compose.yml#L52)
+    - Set up a container that can be integrated with NordVPN, for example [gluetun](https://github.com/adrims/nas/blob/master/mediaserver/docker-compose.yml#L48)
     - **IMPORTANT!!!** To setup the credentials, the new way of generating tokens in NordVPN are not compatible with gluetun, you need to go to the dashboard -> Advance settings area -> Manual configuration -> Service credentials (will give you user and pass to use in gluetun)
     - Remove ports on QBittorrent configuration
 
@@ -131,10 +131,10 @@
         ```
         crw-rw---- 1 root video  226,   0 Aug  9 06:51 card0
         crw-rw---- 1 root render 226, 128 Aug  3 12:34 renderD128
-    - Add those groups to you're cointainer jellyfin - [Example](https://github.com/adrims/nas/blob/master/mediaserver/docker-compose.yml#L131)
+    - Add those groups to you're cointainer jellyfin - [Example](https://github.com/adrims/nas/blob/master/mediaserver/docker-compose.yml#L123)
     - Restart the container and go to Dashboard -> PlayBack -> Transcoding
     - Select your hardware acceleration from the table ![GPU Table](documentation\images\GPU-table.png)
-    - QSV device -> In this case ```/dev/dri/renderD128 ``` You need to pick the one you're using depending on your system (if you're using containers don't forget to mount it [Example](https://github.com/adrims/nas/blob/master/mediaserver/docker-compose.yml#L129))
+    - QSV device -> In this case ```/dev/dri/renderD128 ``` You need to pick the one you're using depending on your system (if you're using containers don't forget to mount it [Example](https://github.com/adrims/nas/blob/master/mediaserver/docker-compose.yml#L121))
     - Activate the formats that your drivers support, usually there are a command that shows you all supported format, in this case ```vainfo```
     - To enable H.264 or HVEC ensure you have HuC firmware configured, otherwise it may cause sync issue.
     - To check if you have HuC firmware configure on Linux you can use:
